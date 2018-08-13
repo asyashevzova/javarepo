@@ -1,0 +1,131 @@
+#!/bin/bash
+#mkdir the folder for our java application
+mkdir -p src/main/java/hello
+#create two class files in this folder 
+echo -ne "package hello;
+
+import org.joda.time.LocalTime;
+
+public class HelloWorld {
+	public static void main(String[] args) {
+		LocalTime currentTime = new LocalTime();
+		System.out.println(\"The current local time is: \" + currentTime);
+		Greeter greeter = new Greeter();
+		System.out.println(greeter.sayHello());
+	}
+}" > src/main/java/hello/HelloWorld.java
+
+echo -ne "package hello;
+
+public class Greeter {
+    public String sayHello() {
+        return \"Hello world!\";
+    }
+}" > src/main/java/hello/Greeter.java
+
+#mkdir the folder for tests 
+mkdir -p src/test/java/hello/
+#create a test 
+echo -ne "package hello;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class GreeterTest {
+
+	private Greeter greeter = new Greeter();
+
+	@Test
+	public void greeterSaysHello() {
+		assertThat(greeter.sayHello(), containsString(\"Hello\"));
+	}
+
+}" > src/test/java/hello/GreeterTest.java
+#create a pom.xml file
+echo -ne "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+	xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.springframework</groupId>
+	<artifactId>gs-maven</artifactId>
+	<packaging>jar</packaging>
+	<version>0.1.0</version>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<!-- tag::joda[] -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<!-- end::joda[] -->
+		<!-- tag::junit[] -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- end::junit[] -->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation=\"org.apache.maven.plugins.shade.resource.ManifestResourceTransformer\">
+									<mainClass>hello.HelloWorld</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>" > pom.xml
+if [ $(mvn -v | echo $?) != 0 ]
+then
+	echo "Seems Maven is not installed, let's do it now"; 
+	#installing Maven with apt-get
+	apt-get install maven;
+	#checking Java Home env variable and setting it, if not set yet
+	if [ -z $JAVA_HOME ] 
+	then
+		export JAVA_HOME=$(update-java-alternatives -l | head -1 | awk '{print $3}'); 
+			echo $JAVA_HOME;
+	else echo $JAVA_HOME
+	fi
+	echo "Now, that Maven is installed, we can proceed";
+	#building the application with Maven
+	mvn compile
+	#packaging the application
+	mvn package
+else
+	#building the application with Maven
+	mvn compile
+	#packaging the application
+	mvn package
+fi
+echo "We are done here"
+
+java -jar target/gs-maven-0.1.0.jar
