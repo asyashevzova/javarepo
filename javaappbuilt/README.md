@@ -3,7 +3,7 @@
 This is a [sample Java application](https://spring.io/guides/gs/maven/) built with Apache Maven tool.
 
 ### Requirements
-* Maven
+* Apache Maven
 * Java
 
 ## Usage
