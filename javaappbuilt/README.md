@@ -23,7 +23,8 @@ The script follows the following logic:
 
   4) Start the Java app
 
-NB! The build log and the application's output go to STDIN
+NB! The build log and the application's output go to STDOUT
+
 ### Sample output
 ```console
 root@kali:/home/vagrant/built_projects/builtjavaapps/javaappbuilt# bash javaappbuild 
@@ -107,7 +108,7 @@ Hello world!
 
 ## Success verification
 
-Since the script displays built logs to STDIN, it's quite easy to track any build errors.
+Since the script displays built logs to STDOUT, it's quite easy to track any build errors.
 The expected output from the app itself is:
 
 "The current local time is: 04:23:55.074
