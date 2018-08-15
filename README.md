@@ -1,2 +1,2 @@
 # javarepo
-test java application
+test java application built with Apache Maven
