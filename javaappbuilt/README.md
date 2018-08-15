@@ -108,7 +108,7 @@ Hello world!
 
 ## Success verification
 
-Since the script displays built logs to STDOUT, it's quite easy to track any build errors.
+Since the script displays built logs to STDIN, it's quite easy to track any build errors.
 The expected output from the app itself is:
 
 "The current local time is: 04:23:55.074
